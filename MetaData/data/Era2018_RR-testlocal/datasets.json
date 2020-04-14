@@ -1,0 +1,41 @@
+{
+    "/GluGluToHHTo2B2G_Jets012": {
+        "dset_type": "mc",
+        "files": [
+            {
+                "bad": false,
+                "events": 25045,
+                "name": "/afs/cern.ch/work/l/lata/public/HH_bbyy/ggHH2Jets_µAOD/myMicroAODOutputFile_1.root",
+                "nevents": 25045,
+                "totEvents": 25045,
+                "weights": 25045.0
+            },
+            {
+                "bad": false,
+                "events": 12420,
+                "name": "/afs/cern.ch/work/l/lata/public/HH_bbyy/ggHH2Jets_µAOD/myMicroAODOutputFile_2.root",
+                "nevents": 12420,
+                "totEvents": 12420,
+                "weights": 12420.0
+            },
+            {
+                "bad": false,
+                "events": 25703,
+                "name": "/afs/cern.ch/work/l/lata/public/HH_bbyy/ggHH2Jets_µAOD/myMicroAODOutputFile_3.root",
+                "nevents": 25703,
+                "totEvents": 25703,
+                "weights": 25703.0
+            },
+            {
+                "bad": false,
+                "events": 24115,
+                "name": "/afs/cern.ch/work/l/lata/public/HH_bbyy/ggHH2Jets_µAOD/myMicroAODOutputFile_4.root",
+                "nevents": 24115,
+                "totEvents": 24115,
+                "weights": 24115.0
+            }
+        ],
+        "parent_n_units": 87283,
+        "vetted": true
+    }
+}
