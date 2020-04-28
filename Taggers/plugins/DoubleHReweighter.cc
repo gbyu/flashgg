@@ -35,6 +35,8 @@ namespace flashgg {
     private:
         void produce( Event &, const EventSetup & ) override;
         float getWeight( int targetNode,float gen_mHH, float gen_cosTheta);
+        float getklScan( float kl, float gen_mHH, float gen_cosTheta);
+        float getNormalisation(float kl, float kt, float c2, float cg, float c2g, TH2F* h_all);
         float getCosThetaStar_CS(TLorentzVector h1, TLorentzVector h2);
         float functionGF(float kl, float kt, float c2, float cg, float c2g, vector<double> A);
         pair<int,int> find2DBin(TH2* h, float x, float y);
@@ -42,7 +44,7 @@ namespace flashgg {
         EDGetTokenT<View<reco::GenParticle> > genParticleToken_;
         int doReweight_;
         edm::FileInPath weightsFile_;  // file with prepared histograms needed for reweighting
-        const unsigned int NUM_benchmarks = 15;  // number of becnhmarks for reweighting 12 +1 SM = 13, box=14, fake2017SM=15 
+        const unsigned int NUM_benchmarks = 95;  // number of becnhmarks for reweighting 12 +1 SM = 13, box=14, fake2017SM=15 
         const unsigned int numberSMbenchmark = 13;  // index of SM benchmark 
         const unsigned int numberBoxbenchmark = 14;  // index of SM benchmark 
         const unsigned int numberFakebenchmark = 15;  // index of SM benchmark 
@@ -64,9 +66,9 @@ namespace flashgg {
         A_13TeV_SM_(iConfig.getParameter< vector<double>>("A_13TeV_SM")),
         benchmarks_map_(iConfig.getParameter<edm::ParameterSet>("benchmarks_map"))
     {
-
-            f_weights_ = new TFile((weightsFile_.fullPath()).c_str(), "READ");
-            
+        
+        f_weights_ = new TFile((weightsFile_.fullPath()).c_str(), "READ");
+        
             for (unsigned int n=0; n<NCOEFFSA_; n++){
                 hists_params_.push_back((TH2F*)f_weights_->Get(Form("h_A%i",n)));
                 if (!(hists_params_[n])) throw cms::Exception( "Configuration" ) << "The file "<<weightsFile_.fullPath()<<" provided for reweighting full grid does not contain the expected histogram number : "<<n<<std::endl;
@@ -75,13 +77,17 @@ namespace flashgg {
             if (!(hist_SM_)) throw cms::Exception( "Configuration" ) << "The file "<<weightsFile_.fullPath()<<" provided for reweighting benchmarks does not contain the expected SM histogram."<<std::endl;
             hist_inputMix_ = (TH2F*)f_weights_->Get("allHHNodeMap2D");
             if (!(hist_inputMix_)) throw cms::Exception( "Configuration" ) << "The file "<<weightsFile_.fullPath()<<" provided for reweighting benchmarks does not contain the expected input histogram for mix of nodes."<<std::endl;
-    
-        for (unsigned int num=0;num<NUM_benchmarks;num++)
-             if (num==(numberSMbenchmark-1)) produces<float>("benchmarkSM");
-             else if (num==(numberBoxbenchmark-1)) produces<float>("benchmarkBox");
-             else if (num==(numberFakebenchmark-1)) produces<float>("benchmark2017fake");
-             else produces<float>(Form("benchmark%i",num));
-    }   
+            
+            for (unsigned int num=0;num<NUM_benchmarks;num++){
+                if (num<numberFakebenchmark){
+                    if (num==(numberSMbenchmark-1)) produces<float>("benchmarkSM");
+                    else if (num==(numberBoxbenchmark-1)) produces<float>("benchmarkBox");
+                    else if (num==(numberFakebenchmark-1)) produces<float>("benchmark2017fake");
+                    else produces<float>(Form("benchmark%i",num));
+                }
+                else produces<float>(Form("KL%i",(num-(numberFakebenchmark-1))));
+            }
+    }
     
 // return bin in 2D isto wihtout under/over flow (e.g. if ibin > ibinmax , ibin = ibinmax)
     pair<int,int> DoubleHReweighter::find2DBin(TH2* h, float x, float y)
@@ -129,7 +135,49 @@ namespace flashgg {
 
        return w;
     }
+
+    float DoubleHReweighter::getklScan( float kl, float gen_mHH, float gen_cosTheta)
+    {
+        float w = 0.;
+        pair<int,int> bins = find2DBin(hist_inputMix_, gen_mHH, gen_cosTheta);
+        float denom = hist_inputMix_->GetBinContent(bins.first, bins.second);
+        if (denom == 0) {
+            return 0;
+        }
+        float nEvSM = hist_SM_->GetBinContent(bins.first, bins.second);
+        vector<double> Acoeffs;
+        for (unsigned int ic = 0; ic < NCOEFFSA_; ++ic){
+            Acoeffs.push_back((hists_params_[ic])->GetBinContent(bins.first, bins.second));
+        }
+        double effBSM = (nEvSM * functionGF(kl,1.,0.,0.,0.,Acoeffs))/functionGF(kl,1.,0.,0.,0.,A_13TeV_SM_);
         
+        if (effBSM/denom < 0) {
+            return 0;
+        } // In case of very small negative weights, which can happen
+        w = ((effBSM/denom)/getNormalisation(kl, 1., 0., 0., 0., hist_inputMix_)) ;
+        
+        return w;
+    }
+
+    float DoubleHReweighter::getNormalisation(float kl, float kt, float c2, float cg, float c2g, TH2F* h_all)
+    {
+        float sumofweights = 0.;
+        int x_range=(h_all->GetNbinsX());
+        int y_range=(h_all->GetNbinsY());
+        
+        for(int binmhh=1; binmhh < x_range+1; binmhh++){ 
+            for(int bincost=1; bincost < y_range+1; bincost++){ 
+                float nEvSM = hist_SM_->GetBinContent(binmhh, bincost);
+                vector<double> Acoeffs;               
+                for (unsigned int ic = 0; ic < NCOEFFSA_; ++ic){
+                    Acoeffs.push_back((hists_params_[ic])->GetBinContent(binmhh, bincost));
+                }     
+                sumofweights += (nEvSM * functionGF(kl,kt,c2,cg,c2g,Acoeffs))/functionGF(kl,kt,c2,cg,c2g,A_13TeV_SM_);                
+            }
+        } 
+        return sumofweights;
+    }   
+    
     float DoubleHReweighter::getCosThetaStar_CS(TLorentzVector h1, TLorentzVector h2)
     {
     // cos theta star angle in the Collins Soper frame
@@ -154,6 +202,8 @@ namespace flashgg {
         }
        
         std::vector<float> NRWeights; //we will use this in the future when we would like to save all weights
+        std::vector<float> klScanWeights;  // for KL-Scan
+        
         if (selHiggses.size()==2){
             TLorentzVector H1,H2;
             H1.SetPtEtaPhiE(selHiggses[0]->p4().pt(),selHiggses[0]->p4().eta(),selHiggses[0]->p4().phi(),selHiggses[0]->p4().energy());
@@ -161,18 +211,32 @@ namespace flashgg {
             float gen_mHH  = (H1+H2).M();
             float gen_cosTheta = getCosThetaStar_CS(H1,H2);   
             // Now, lets fill in the weigts for the 12 benchmarks.
-            for (unsigned int n=0; n<NUM_benchmarks; n++){ 
+            for (unsigned int n=0; n<numberFakebenchmark; n++){ 
                 NRWeights.push_back(getWeight(n, gen_mHH, gen_cosTheta));
+            }
+            //weights for KL_scan
+            for (unsigned int kl=1; kl<82; kl++){
+                float kl_p = (1.0*(kl-31.))/5.;
+                klScanWeights.push_back(getklScan(kl_p, gen_mHH, gen_cosTheta));
+                //   std::cout << "KL=="<< kl_p << std::endl;
             }
         } 
         for (unsigned int n=0; n<NUM_benchmarks; n++){
-            std::string weight_number = "benchmark";
-            if (n==(numberSMbenchmark-1)) weight_number.append("SM");
-            else if (n==(numberBoxbenchmark-1)) weight_number.append("Box");
-            else if (n==(numberFakebenchmark-1)) weight_number.append("2017fake");
-            else weight_number.append(std::to_string(n));
-            std::unique_ptr<float>  final_weight( new float(NRWeights[n]) );
-            evt.put( std::move( final_weight) , weight_number);
+            if(n < numberFakebenchmark){
+                std::string weight_number = "benchmark";
+                if (n==(numberSMbenchmark-1)) weight_number.append("SM");
+                else if (n==(numberBoxbenchmark-1)) weight_number.append("Box");
+                else if (n==(numberFakebenchmark-1)) weight_number.append("2017fake");
+                else weight_number.append(std::to_string(n));
+                std::unique_ptr<float>  final_weight( new float(NRWeights[n]) );
+                evt.put( std::move( final_weight) , weight_number);
+            }
+            else{
+                std::string KL_Scan_w = "KL";
+                KL_Scan_w.append(std::to_string(n-(numberFakebenchmark-1)));
+                std::unique_ptr<float>  final_weight( new float(klScanWeights[n-numberFakebenchmark]) );
+                evt.put( std::move( final_weight) , KL_Scan_w);
+            }
         }
          // number is a string. Each collection is specified by 4 string :  type, name of producer, process_name(reco,flashggMicroAOD),last one  - if producer produces more than one object of the same type -> here : number
     }

@@ -138,7 +138,9 @@ class DoubleHCustomize():
             var_workspace += ["benchmark_reweight_SM := getBenchmarkReweight(12)"]
             var_workspace += ["benchmark_reweight_box := getBenchmarkReweight(13)"]
             var_workspace += ["benchmark_reweight_2017fake := getBenchmarkReweight(14)"]
-
+            for KL in range(1,81):
+                variables += ["KL%d := getBenchmarkReweight(%d)"%(KL, (KL+14))]
+            
         if self.customize.processId != "Data": 
             var_workspace += ['btagReshapeWeight := weight("JetBTagReshapeWeightCentral")']
 
