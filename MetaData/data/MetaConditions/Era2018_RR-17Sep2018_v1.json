@@ -1,10 +1,10 @@
 {
     "globalTags" :
     {
-        "data" : "102X_dataRun2_v10",
-        "MC" : "102X_upgrade2018_realistic_v18"
+        "data" : "102X_dataRun2_v12",
+        "MC" : "102X_upgrade2018_realistic_v19"
     },
-
+    
     "flashggMETsFunction" : "runMETs2016",
     "flashggMetFilters" :
     {
@@ -78,6 +78,54 @@
     },
     "flashggDiPhotonSystematics" : "flashggDiPhotonSystematics2018_cfi",
     
+    "flashggDiPhotonMVA" :
+    {
+        "weightFile" : "flashgg/Taggers/data/legacyDiphoModel2018.xml",
+        "version" : "xgb"
+    },
+    
+    "flashggVBFMVA" :
+    {
+                    "weightFile" : "flashgg/Taggers/data/multiclassDijetModel2018.xml"
+    },
+    
+    "stageOneCombinedTag" :
+    {
+        "rawDiphoBounds" : [
+            0.771, 0.569,
+            0.839, 0.698,
+            
+            0.852, 0.751,
+            0.878, 0.753,
+            0.910, 0.837,
+            
+            0.827, 0.743,
+            0.887, 0.778,
+            0.922, 0.841,
+            
+            0.938, 0.888,
+            
+            0.800,
+            0.745, 0.715,
+            0.764, 0.750,
+            0.858,
+            0.788
+        ],
+        "rawDijetBounds" : [
+            0.376, 0.419,
+            0.398, 0.551,
+            0.05,
+            0.550
+        ],
+        "rawGghBounds" : [
+            0.842, 0.534,
+            0.914, 0.814,
+            0.447,
+            0.521
+        ]
+    },
+    
+    
     "MUON_ID" : "Medium",
     "MUON_ISO" : "LooseRel",
 
@@ -136,7 +184,7 @@
 		"with_Mjj" : "flashgg/Taggers/data/HHTagger/cumulativeTransformation_20191218.root",
 		"wo_Mjj" : "flashgg/Taggers/data/HHTagger/cumulativeTransformation_20192401_wo_Mjj_leptonveto_2018.root"
 	},
-	"MVAscalingValue" : 1.0,
+	"MVAscalingValue" : 0.864,
 	"NodesReweightingFileName" : "flashgg/Taggers/data/HHTagger/HHreweight_2018_15112019.root",
 	"ttHWeightfile" : "flashgg/Taggers/data/ttHKiller/Keras2017_converted_allnode.pb",
 	"ttHKiller_mean" : [  3.22491144e+02,   7.22919780e+01,   1.49387571e-01,   4.94052483e-03,
@@ -163,12 +211,12 @@
         "jetID" : "Tight2018",
         "MVAscalingValue" : 1.0,
         "weightsFile" : {
-                "with_Mjj" : "flashgg/Taggers/data/HHTagger/training_with_2018_test_C2V0_training.weights.xml",
-                "wo_Mjj" : "flashgg/Taggers/data/HHTagger/training_with_2018_test_C2V0_training.weights.xml"
+                "with_Mjj" : "flashgg/Taggers/data/HHTagger/training_with_18_12_2019_training2.weights.xml",
+                "wo_Mjj" : "flashgg/Taggers/data/HHTagger/training_with_18_12_2019_wo_Mjj_training2.weights.xml"
         },
         "MVAFlatteningFileName" : {
-                "with_Mjj" : "flashgg/Taggers/data/HHTagger/cumulativeTransformation_Total_preselection_diffNaming_2018.root",
-                "wo_Mjj" : "flashgg/Taggers/data/HHTagger/cumulativeTransformation_Total_preselection_diffNaming_2018.root"
+                "with_Mjj" : "flashgg/Taggers/data/HHTagger/cumulativeTransformation_20191218.root",
+                "wo_Mjj" : "flashgg/Taggers/data/HHTagger/cumulativeTransformation_20191218_wo_Mjj.root"
         },
         "ttHWeightfile" : "flashgg/Taggers/data/ttHKiller/Keras2017_converted_allnode.pb",
         "ttHKiller_mean" : [  3.22491144e+02,   7.22919780e+01,   1.49387571e-01,   4.94052483e-03,

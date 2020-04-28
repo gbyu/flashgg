@@ -102,26 +102,6 @@ class DoubleHCustomize():
                 "sigmaMJets := getSigmaMOverMJets()"
         ]
         if self.customize.addVBFDoubleHVariables: variables +=[ 
-                #"b1_pt := b1_pt()",
-                #"b1_eta := b1_eta()",
-                #"b1_phi := b1_phi()",
-                #"b2_pt := b2_pt()",
-                #"b2_eta := b2_eta()",
-                #"b2_phi := b2_phi()",
-                #"b1_pz := b1_pz()",
-                #"b2_pz := b2_pz()",
-                #"Mbb_gen := Mbb_gen()", 
-                #"q1_pt := q1_pt()",
-                #"q1_eta := q1_eta()",
-                #"q1_ID := q1_ID()",
-                #"q2_ID := q2_ID()",
-                #"q1_phi := q1_phi()",
-                #"q2_pt := q2_pt()",
-                #"q2_eta := q2_eta()",
-                #"q2_phi := q2_phi()",
-                #"q1_pz := q1_pz()",
-                #"q2_pz := q2_pz()",
-                #"Mqq_gen := Mqq_gen()",
                 "VBFDeltaR_jg := getVBFDeltaR_jg()",
                 "VBFDeltaR_jb := getVBFDeltaR_jb()",
                 "VBFJet_mjj := getVBFJet_mjj()",
@@ -145,31 +125,8 @@ class DoubleHCustomize():
                 "VBF_angleHH := getVBF_angleHH()",
                 "VBF_dRHH := getVBF_dRHH()",
                 "VBF_etaHH := getVBF_etaHH()",
-                "diVBFjet_pt := getdiVBFjet_pt()"
-                #"VBFJet_Delta_eta := abs(VBFleadJet().eta - VBFsubleadJet().eta)",
-                #"VBFleadJet_pt :=  VBFleadJet().pt ",
-                #"VBFsubleadJet_pt := VBFsubleadJet().pt ",
-                #"VBFleadJet_eta := VBFleadJet().eta",
-                #"VBFsubleadJet_eta := VBFsubleadJet().eta",
-                #"VBFleadJet_phi := VBFleadJet().phi",
-                #"VBFsubleadJet_phi := VBFsubleadJet().phi",
-                #"VBFleadJet_px := VBFleadJet().px",
-                #"VBFsubleadJet_px := VBFsubleadJet().px",
-                #"VBFleadJet_py := VBFleadJet().py",
-                #"VBFsubleadJet_py := VBFsubleadJet().py",
-                #"VBFleadJet_pz := VBFleadJet().pz",
-                #"VBFsubleadJet_pz := VBFsubleadJet().pz",
-                #"VBFleadJet_DeepFlavour := VBFleadJet().bDiscriminator('mini_pfDeepFlavourJetTags:probusd')+VBFleadJet().bDiscriminator('mini_pfDeepFlavourJetTags:probg')",
-                #"VBFleadJet_QGL := VBFleadJet().QGL() ",
-                #"VBFleadJet_PUID := VBFleadJet().puJetIdMVA()",
-                #"VBFsubleadJet_DeepFlavour := VBFsubleadJet().bDiscriminator('mini_pfDeepFlavourJetTags:probusd')+VBFsubleadJet().bDiscriminator('mini_pfDeepFlavourJetTags:probg')",
-                #"VBFsubleadJet_QGL := VBFsubleadJet.QGL()",
-                #"VBFsubleadJet_PUID := VBFsubleadJet().puJetIdMVA()",
-                #"VBFleadJet_hflav := VBFleadJet().hadronFlavour()",
-                #"VBFleadJet_pflav := VBFleadJet().partonFlavour()",
-                #"VBFsubleadJet_hflav := VBFsubleadJet().hadronFlavour()",
-                #"VBFsubleadJet_pflav := VBFsubleadJet().partonFlavour()"
-
+                "diVBFjet_pt := getdiVBFjet_pt()",
+                "VBF_theta := getVBF_theta()"
         ]
         if self.customize.doubleHReweight > 0: 
             for num in range(0,12):  #12 benchmarks + 1 SM
@@ -343,6 +300,9 @@ class DoubleHCustomize():
                 "VBF_angleHH := getVBF_angleHH()",
                 "VBF_dRHH := getVBF_dRHH()",
                 "VBF_etaHH := getVBF_etaHH()",
+                "diVBFjet_pt := getdiVBFjet_pt()",
+                "VBF_theta := getVBF_theta()",
+                "VBFDelta_phi := getVBFDelta_phi" 
         ]
         if not (self.customize.doubleHTagDumpMinVariables or self.customize.dumpWorkspace) :
             return self.variablesToDump()

@@ -423,7 +423,7 @@ namespace flashgg {
                     }
                 }
             }
-            std::cout << " genweight applied  =  " << genweight <<  std::endl;
+            //            std::cout << " genweight applied  =  " << genweight <<  std::endl;
             return genweight;
         }         
 

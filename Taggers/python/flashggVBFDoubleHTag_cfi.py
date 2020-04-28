@@ -58,7 +58,7 @@ flashggVBFDoubleHTag = cms.EDProducer("FlashggVBFDoubleHTagProducer",
                                    VBFJetIDLevel = cms.string(jetID), 
                                    VBFMjjCut = cms.double(0.0),
                                    VBFJetEta = cms.double(4.7),
-                                   VBFleadJetPt  = cms.double(40.0),
+                                   VBFleadJetPt  = cms.double(30.0),
                                    VBFsubleadJetPt = cms.double(30.0),
 
                                    #MVABoundaries  = cms.vdouble(0.29,0.441, 0.724), # category boundaries for MVA w/o Mjj
@@ -80,9 +80,9 @@ flashggVBFDoubleHTag = cms.EDProducer("FlashggVBFDoubleHTagProducer",
                                                         multiclassSignalIdx=cms.int32(2), # this is multiclass index for Signal
                                                         ),
 
-                                   doMVAFlattening=cms.bool(True),#do transformation of cumulative to make it flat
+                                   doMVAFlattening=cms.bool(False),#do transformation of cumulative to make it flat
                                    MVAscaling=cms.double(MVAscalingValue),
-                                   doCategorization=cms.bool(True),#do categorization based on MVA x MX or only fill first tree with all events
+                                   doCategorization=cms.bool(False),#do categorization based on MVA x MX or only fill first tree with all events
                                    MVAFlatteningFileName=cms.untracked.FileInPath("%s"%MVAFlatteningFileName),#FIXME, this should be optional, is it?
                                    globalVariables=globalVariables,
                                    doReweight = flashggDoubleHReweight.doReweight,
@@ -118,43 +118,28 @@ cfgTools.addVariables(flashggVBFDoubleHTag.MVAConfig.variables,
                       # here the syntax is VarNameInTMVA := expression
                       #### With or without Mjj is customized inside python doubleHCustomize and using options UseMjj
                       [
-                       "Mjj := dijet().M()",
-                       "leadingJet_DeepFlavour := leadJet().bDiscriminator('mini_pfDeepFlavourJetTags:probb')+leadJet().bDiscriminator('mini_pfDeepFlavourJetTags:probbb')+leadJet().bDiscriminator('mini_pfDeepFlavourJetTags:problepb')",
-                       "subleadingJet_DeepFlavour := subleadJet().bDiscriminator('mini_pfDeepFlavourJetTags:probb')+subleadJet().bDiscriminator('mini_pfDeepFlavourJetTags:probbb')+subleadJet().bDiscriminator('mini_pfDeepFlavourJetTags:problepb')",
-                       "absCosThetaStar_CS := abs(getCosThetaStar_CS)",
-                       "absCosTheta_bb := abs(CosThetaAngles()[1])",
-                       "absCosTheta_gg := abs(CosThetaAngles()[0])",
-                       "diphotonCandidatePtOverdiHiggsM := diphotonPtOverM()",
-                       "dijetCandidatePtOverdiHiggsM := dijetPtOverM()",
-                       "customLeadingPhotonIDMVA := diPhoton.leadingView.phoIdMvaWrtChosenVtx",
-                       "customSubLeadingPhotonIDMVA := diPhoton.subLeadingView.phoIdMvaWrtChosenVtx",
-                       "leadingPhotonSigOverE := diPhoton.leadingPhoton.sigEOverE",
-                       "subleadingPhotonSigOverE := diPhoton.subLeadingPhoton.sigEOverE",
-                       "sigmaMOverM := sqrt(0.5*(diPhoton.leadingPhoton.sigEOverE*diPhoton.leadingPhoton.sigEOverE + diPhoton.subLeadingPhoton.sigEOverE*diPhoton.subLeadingPhoton.sigEOverE))",
-                       "(leadingPhoton_pt/CMS_hgg_mass) := diPhoton.leadingPhoton.pt/diPhoton().mass",
-                       "(subleadingPhoton_pt/CMS_hgg_mass) := diPhoton.subLeadingPhoton.pt/diPhoton().mass",
-                       "(leadingJet_pt/Mjj) := leadJet().pt/dijet().mass",
-                       "(subleadingJet_pt/Mjj) := subleadJet().pt/dijet().mass",
-                       "rho := global.rho",
-                       "(leadingJet_bRegNNResolution*1.4826) := leadJet().userFloat('bRegNNResolution')*1.4826",
-                       "(subleadingJet_bRegNNResolution*1.4826) := subleadJet().userFloat('bRegNNResolution')*1.4826",
-                       "(sigmaMJets*1.4826) := getSigmaMOverMJets()*1.4826",
-                       "PhoJetMinDr := getPhoJetMinDr()",
-                       "PhoJetOtherDr := getPhoJetOtherDr()",			
-                       "(VBFleadJet_pt/VBFJet_mjj) :=  getVBFleadJet_pt()/getVBFJet_mjj() ",
-                       "VBFleadJet_eta := getVBFleadJet_eta()",
-                       "(VBFsubleadJet_pt/VBFJet_mjj) := getVBFsubleadJet_pt()/getVBFJet_mjj() ",
-                       "VBFsubleadJet_eta := getVBFsubleadJet_eta()",
-                       "VBFCentrality_jg := getVBFCentrality_jg()",
-                       "VBFCentrality_jb := getVBFCentrality_jb()",
-                       "VBFDeltaR_jg := getVBFDeltaR_jg()",
-                       "VBFDeltaR_jb := getVBFDeltaR_jb()",
-                       "VBFProd_eta := getVBFProd_eta",
-                       "VBFJet_mjj := getVBFJet_mjj()",
-                       "VBFJet_Delta_eta := getVBFJet_Delta_eta()",
-                       "VBFleadJet_QGL := getVBFleadJet_QGL() ",
-                       "VBFsubleadJet_QGL := getVBFsubleadJet_QGL()",
-                       "diHiggs_pt := getdiHiggsP4().pt()",
-                       "MX := MX()"
-                       ]
-                      )
+                          "Mjj := dijet().M()",
+                          "leadingJet_DeepFlavour := leadJet().bDiscriminator('mini_pfDeepFlavourJetTags:probb')+leadJet().bDiscriminator('mini_pfDeepFlavourJetTags:probbb')+leadJet().bDiscriminator('mini_pfDeepFlavourJetTags:problepb')",
+                          "subleadingJet_DeepFlavour := subleadJet().bDiscriminator('mini_pfDeepFlavourJetTags:probb')+subleadJet().bDiscriminator('mini_pfDeepFlavourJetTags:probbb')+subleadJet().bDiscriminator('mini_pfDeepFlavourJetTags:problepb')",
+                          "absCosThetaStar_CS := abs(getCosThetaStar_CS)",
+                          "absCosTheta_bb := abs(CosThetaAngles()[1])",
+                          "absCosTheta_gg := abs(CosThetaAngles()[0])",
+                          "diphotonCandidatePtOverdiHiggsM := diphotonPtOverM()",
+                          "dijetCandidatePtOverdiHiggsM := dijetPtOverM()",
+                          "customLeadingPhotonIDMVA := diPhoton.leadingView.phoIdMvaWrtChosenVtx",
+                          "customSubLeadingPhotonIDMVA := diPhoton.subLeadingView.phoIdMvaWrtChosenVtx",
+                          "leadingPhotonSigOverE := diPhoton.leadingPhoton.sigEOverE",
+                          "subleadingPhotonSigOverE := diPhoton.subLeadingPhoton.sigEOverE",
+                          "sigmaMOverM := sqrt(0.5*(diPhoton.leadingPhoton.sigEOverE*diPhoton.leadingPhoton.sigEOverE + diPhoton.subLeadingPhoton.sigEOverE*diPhoton.subLeadingPhoton.sigEOverE))",
+                          "(leadingPhoton_pt/CMS_hgg_mass) := diPhoton.leadingPhoton.pt/diPhoton().mass",
+                          "(subleadingPhoton_pt/CMS_hgg_mass) := diPhoton.subLeadingPhoton.pt/diPhoton().mass",
+                          "(leadingJet_pt/Mjj) := leadJet().pt/dijet().mass",
+                          "(subleadingJet_pt/Mjj) := subleadJet().pt/dijet().mass",
+                          "rho := global.rho",
+                          "(leadingJet_bRegNNResolution*1.4826) := leadJet().userFloat('bRegNNResolution')*1.4826",
+                          "(subleadingJet_bRegNNResolution*1.4826) := subleadJet().userFloat('bRegNNResolution')*1.4826",
+                          "(sigmaMJets*1.4826) := getSigmaMOverMJets()*1.4826",
+                          "PhoJetMinDr := getPhoJetMinDr()",
+                          "PhoJetOtherDr := getPhoJetOtherDr()"
+                      ]
+                  )

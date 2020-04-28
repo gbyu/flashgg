@@ -160,9 +160,32 @@ float VBFDoubleHTag::getVBF_etaHH() const
 }
 float VBFDoubleHTag::getdiVBFjet_pt() const
 {
+    float diVBFjet_pt = (VBFleadJet_->p4() + VBFsubleadJet_->p4()).pt();
+    return diVBFjet_pt;
+}
+float VBFDoubleHTag::getVBF_theta() const
+{
+    
+    LorentzVector jj_lor = dijet();
+    LorentzVector pp_lor = diPhoton()->p4();
+    LorentzVector hh_lor = dijet()+diPhoton()->p4();
+    TLorentzVector hh;
+    hh.SetPxPyPzE(hh_lor.Px(),hh_lor.Py(),hh_lor.Pz(),hh_lor.E());
+    TLorentzVector jj;
+    jj.SetPxPyPzE(jj_lor.Px(),jj_lor.Py(),jj_lor.Pz(),jj_lor.E());
+    TLorentzVector pp;
+    pp.SetPxPyPzE(pp_lor.Px(),pp_lor.Py(),pp_lor.Pz(),pp_lor.E());
+    
+    LorentzVector vbf_lor =VBFleadJet_->p4() + VBFsubleadJet_->p4();  
+    TLorentzVector vbf_pair;
+    vbf_pair.SetPxPyPzE(vbf_lor.Px(),vbf_lor.Py(),vbf_lor.Pz(),vbf_lor.E());
 
-   float diVBFjet_pt =  (VBFleadJet().p4()+VBFsubleadJet().p4()).pt();
-   return diVBFjet_pt;
+    vbf_pair.Boost(-1.*hh.BoostVector());
+    jj.Boost(-1.*hh.BoostVector());
+    pp.Boost(-1.*hh.BoostVector());
+    float a_jj = jj.Angle(vbf_pair.Vect()); float a_gg = pp.Angle(vbf_pair.Vect());
+    float min_angle = (a_jj<a_gg)? a_jj: a_gg;
+    return min_angle;
 }
 
 // Local Variables:

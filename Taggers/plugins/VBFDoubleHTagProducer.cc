@@ -449,7 +449,6 @@ namespace flashgg {
                         continue;
                     }
 
-
                     // find vertex associated to diphoton object
                     size_t vtx = (size_t)dipho->jetCollectionIndex();
                     // and read corresponding jet collection
@@ -487,6 +486,7 @@ namespace flashgg {
                             auto jet_2 = cleaned_jets[kjet];
                             auto dijet_mass = (jet_1->p4()+jet_2->p4()).mass(); 
                             if (dijet_mass<mjjBoundaries_[0] || dijet_mass>mjjBoundaries_[1]) continue;
+                            if ( jet_1->pt()/dijet_mass <=0.55) continue;
                             double sumbtag=0.;
                             for (unsigned int btag_num=0;btag_num<bTagType_.size();btag_num++)
                                 sumbtag+=jet_1->bDiscriminator(bTagType_[btag_num]) + jet_2->bDiscriminator(bTagType_[btag_num]);
@@ -507,26 +507,19 @@ namespace flashgg {
                     std::vector<edm::Ptr<flashgg::Jet> > VBFcleaned_jets;
                     for( size_t ijet=0; ijet < VBFjets->size(); ++ijet ) {
                         auto VBFjet = VBFjets->ptrAt(ijet);
-                        if (VBFjet->pt()< VBFsubleadJetPt_ || fabs(VBFjet->eta())> VBFJetEta_) continue;
-                        if (VBFjet->pt() < 50)
-                         {
-                          if(fabs(VBFjet->eta()) < 2.5)
-                            {
-                                if(VBFjet->puJetIdMVA() < 0.86) continue;
+                        float tempeta = fabs(VBFjet->eta());
+                        if (VBFjet->pt()< VBFsubleadJetPt_ || tempeta> VBFJetEta_) continue;
+                        if (VBFjet->pt() < 50 && (tempeta>2.5 && tempeta<3.5)){
+                            if( tempeta < 2.75 ){
+                                if(VBFjet->puJetIdMVA() < -0.52) continue;
                             }
-                          else if(fabs(VBFjet->eta()) > 2.5 && fabs(VBFjet->eta()) < 2.75 )
-                            {
-                                if(VBFjet->puJetIdMVA() < -0.10) continue;
+                            else if(tempeta < 3.0 ){
+                                if(VBFjet->puJetIdMVA() < -0.38) continue;
                             }
-                          else if(fabs(VBFjet->eta()) > 2.75 && fabs(VBFjet->eta()) < 3.0 )
-                            {
-                                if(VBFjet->puJetIdMVA() < -0.05) continue;
+                            else {
+                                if(VBFjet->puJetIdMVA() < -0.3) continue;
                             }
-                          else if(fabs(VBFjet->eta()) > 3.0 && fabs(VBFjet->eta()) < 5.0 )
-                            {
-                                if(VBFjet->puJetIdMVA() < -0.01) continue;
-                            }
-                         }
+                        }
                         if( useVBFJetID_ ){
                             if( VBFJetIDLevel_ == "Loose" && !VBFjet->passesJetID  ( flashgg::Loose ) ) continue;
                             if( VBFJetIDLevel_ == "Tight" && !VBFjet->passesJetID  ( flashgg::Tight ) ) continue;
@@ -546,26 +539,22 @@ namespace flashgg {
                         auto jet_3 = VBFcleaned_jets.at(ijet);
                         for( size_t kjet=ijet+1; kjet < VBFcleaned_jets.size(); ++kjet ){
                             auto jet_4 = VBFcleaned_jets.at(kjet);
-                            if(jet_3 != jet1 || jet_3 != jet2) {
-                                if(jet_4 != jet1 || jet_4 != jet2) {
-                                  if (jet_3->pt() > VBFleadJetPt_ && jet_4->pt() > VBFsubleadJetPt_) {
-                                    auto temp_dijetVBF_mass = (jet_3->p4()+jet_4->p4()).mass();
-                                    if (temp_dijetVBF_mass > dijetVBF_mass) {
-                                        dijetVBF_mass= temp_dijetVBF_mass;
-                                        if (dijetVBF_mass > VBFMjjCut_) {
-                                            hasVBFJets = true;
-                                            jet3 = jet_3;
-                                            jet4 = jet_4;
-                                        }
+                            if (jet_3->pt() > VBFleadJetPt_ && jet_4->pt() > VBFsubleadJetPt_) {
+                                auto temp_dijetVBF_mass = (jet_3->p4()+jet_4->p4()).mass();
+                                if (temp_dijetVBF_mass > dijetVBF_mass) {
+                                    dijetVBF_mass= temp_dijetVBF_mass;
+                                    if (dijetVBF_mass > VBFMjjCut_) {
+                                        hasVBFJets = true;
+                                        jet3 = jet_3;
+                                        jet4 = jet_4;
                                     }
-                                } 
+                                }
                             }
                         }
                     }
-                }    
-
+                
 //PUID:
-                if (!hasVBFJets) continue;
+                    if (!hasVBFJets) continue;
 
                     cout << hasVBFJets << endl;
                     //if (!hasVBFJets) continue;             
@@ -633,7 +622,6 @@ namespace flashgg {
                         }
 
 */
-        
                     // prepare tag object
                     VBFDoubleHTag tag_obj(dipho, leadJet, subleadJet, VBFleadJet, VBFsubleadJet);
                     tag_obj.setDiPhotonIndex( candIndex );
@@ -964,8 +952,8 @@ namespace flashgg {
                     //            tag_obj.includeWeights( *leadJet );
                     //            tag_obj.includeWeights( *subleadJet );
 
-                    tag_obj.includeWeightsByLabel( *leadJet ,"JetBTagReshapeWeight");
-                    tag_obj.includeWeightsByLabel( *subleadJet , "JetBTagReshapeWeight" );
+                    tag_obj.includeWeightsByLabel( *leadJet ,"JetBTagReshapeWeight", false);
+                    tag_obj.includeWeightsByLabel( *subleadJet , "JetBTagReshapeWeight", false);
 
 
 

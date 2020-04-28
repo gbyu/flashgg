@@ -166,7 +166,7 @@ namespace flashgg {
         float getVBF_dRHH() const;
         float getVBF_etaHH() const;
         float getdiVBFjet_pt() const;
-
+        float getVBF_theta() const;
 //        void setisVBF(bool x) { isVBF_ = x; }
 //        bool isVBF() const { return isVBF_; }
 

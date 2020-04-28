@@ -499,7 +499,7 @@ namespace flashgg {
                 double mvaScaled = mva/(mva*(1.-MVAscaling_)+MVAscaling_);
                 mva = MVAFlatteningCumulative_->Eval(mvaScaled);
             }
-            if (evt.id().event() == 64129) continue; 
+            //            if (evt.id().event() == 64129) continue; 
             tag_obj.setEventNumber(evt.id().event() );
             tag_obj.setMVA( mva );
            
@@ -777,8 +777,8 @@ namespace flashgg {
             //            tag_obj.includeWeights( *leadJet );
             //            tag_obj.includeWeights( *subleadJet );
 
-                        tag_obj.includeWeightsByLabel( *leadJet ,"JetBTagReshapeWeight");
-                        tag_obj.includeWeightsByLabel( *subleadJet , "JetBTagReshapeWeight" );
+            tag_obj.includeWeightsByLabel( *leadJet ,"JetBTagReshapeWeight", false);
+            tag_obj.includeWeightsByLabel( *subleadJet , "JetBTagReshapeWeight", false);
 
 
 

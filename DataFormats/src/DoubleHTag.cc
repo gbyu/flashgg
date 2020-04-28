@@ -272,6 +272,11 @@ float DoubleHTag::getdiVBFjet_pt() const
    float diVBFjet_pt = 0;
    return diVBFjet_pt;
 }
+float DoubleHTag::getVBF_theta() const
+{
+   float VBF_theta = 0;
+   return VBF_theta;
+}
 
 
 // Local Variables:
