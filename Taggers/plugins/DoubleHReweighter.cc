@@ -154,8 +154,8 @@ namespace flashgg {
         if (effBSM/denom < 0) {
             return 0;
         } // In case of very small negative weights, which can happen
-        w = ((effBSM/denom)/getNormalisation(kl, 1., 0., 0., 0., hist_inputMix_)) ;
-        
+        //w = ((effBSM/denom)/getNormalisation(kl, 1., 0., 0., 0., hist_inputMix_)) ;
+        w = (effBSM/denom);   
         return w;
     }
 
