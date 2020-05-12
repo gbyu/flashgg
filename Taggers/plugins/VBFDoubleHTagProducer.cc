@@ -549,7 +549,9 @@ namespace flashgg {
                                 auto temp_dijetVBF_mass = (jet_3->p4()+jet_4->p4()).mass();
                                 auto temp_deta = fabs(jet_3->eta()-jet_4->eta());
                                 
-                                if (temp_deta<2.0) continue;
+                                if (temp_deta<2.0){
+                                    if (temp_dijetVBF_mass<250)  continue;
+                                }
                                 if (temp_dijetVBF_mass > dijetVBF_mass) {
                                     dijetVBF_mass= temp_dijetVBF_mass;
                                     if (dijetVBF_mass > VBFMjjCut_) {
