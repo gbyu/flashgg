@@ -54,7 +54,7 @@ flashggVBFDoubleHTag = cms.EDProducer("FlashggVBFDoubleHTagProducer",
                                    BTagType = cms.vstring('mini_pfDeepFlavourJetTags:probb','mini_pfDeepFlavourJetTags:probbb','mini_pfDeepFlavourJetTags:problepb'), #string for btag algorithm
                                    UseJetID = cms.bool(True),
                                    JetIDLevel = cms.string(jetID),
-                                   UseVBFJetID = cms.bool(False),
+                                   UseVBFJetID = cms.bool(True),
                                    VBFJetIDLevel = cms.string(jetID), 
                                    VBFMjjCut = cms.double(0.0),
                                    VBFJetEta = cms.double(4.7),
@@ -80,7 +80,7 @@ flashggVBFDoubleHTag = cms.EDProducer("FlashggVBFDoubleHTagProducer",
                                                         multiclassSignalIdx=cms.int32(2), # this is multiclass index for Signal
                                                         ),
 
-                                   doMVAFlattening=cms.bool(False),#do transformation of cumulative to make it flat
+                                   doMVAFlattening=cms.bool(True),#do transformation of cumulative to make it flat
                                    MVAscaling=cms.double(MVAscalingValue),
                                    doCategorization=cms.bool(False),#do categorization based on MVA x MX or only fill first tree with all events
                                    MVAFlatteningFileName=cms.untracked.FileInPath("%s"%MVAFlatteningFileName),#FIXME, this should be optional, is it?

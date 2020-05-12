@@ -509,14 +509,20 @@ namespace flashgg {
                         auto VBFjet = VBFjets->ptrAt(ijet);
                         float tempeta = fabs(VBFjet->eta());
                         if (VBFjet->pt()< VBFsubleadJetPt_ || tempeta> VBFJetEta_) continue;
-                        if (VBFjet->pt() < 50 && (tempeta>2.5 && tempeta<3.5)){
-                            if( tempeta < 2.75 ){
-                                if(VBFjet->puJetIdMVA() < -0.52) continue;
+                        if (VBFjet->pt() < 50){// && (tempeta>2.5 && tempeta<3.5)){
+                            if( tempeta<2.5){ //loose
+                                if(VBFjet->puJetIdMVA()<-0.89) continue;
                             }
-                            else if(tempeta < 3.0 ){
-                                if(VBFjet->puJetIdMVA() < -0.38) continue;
+                            else if( tempeta < 2.75 ){ // tight
+                                if(VBFjet->puJetIdMVA() < -0.1) continue;
                             }
-                            else {
+                            else if(tempeta < 3.0 ){ //tight
+                                if(VBFjet->puJetIdMVA() < -0.05) continue;
+                            } 
+                            else if (tempeta<3.5){ //tight
+                                if(VBFjet->puJetIdMVA() < -0.01) continue;
+                            }
+                            else { //loose
                                 if(VBFjet->puJetIdMVA() < -0.3) continue;
                             }
                         }
@@ -541,6 +547,9 @@ namespace flashgg {
                             auto jet_4 = VBFcleaned_jets.at(kjet);
                             if (jet_3->pt() > VBFleadJetPt_ && jet_4->pt() > VBFsubleadJetPt_) {
                                 auto temp_dijetVBF_mass = (jet_3->p4()+jet_4->p4()).mass();
+                                auto temp_deta = fabs(jet_3->eta()-jet_4->eta());
+                                
+                                if (temp_deta<2.0) continue;
                                 if (temp_dijetVBF_mass > dijetVBF_mass) {
                                     dijetVBF_mass= temp_dijetVBF_mass;
                                     if (dijetVBF_mass > VBFMjjCut_) {
@@ -952,8 +961,11 @@ namespace flashgg {
                     //            tag_obj.includeWeights( *leadJet );
                     //            tag_obj.includeWeights( *subleadJet );
 
-                    tag_obj.includeWeightsByLabel( *leadJet ,"JetBTagReshapeWeight", false);
-                    tag_obj.includeWeightsByLabel( *subleadJet , "JetBTagReshapeWeight", false);
+                    tag_obj.includeWeightsByLabel( *leadJet ,"JetBTagReshapeWeight");
+                    tag_obj.includeWeightsByLabel( *subleadJet , "JetBTagReshapeWeight");
+                    // For systematic
+                    //                    tag_obj.includeWeightsByLabel( *leadJet ,"JetBTagReshapeWeight", false);
+                    //                   tag_obj.includeWeightsByLabel( *subleadJet , "JetBTagReshapeWeight", false);
 
 
 

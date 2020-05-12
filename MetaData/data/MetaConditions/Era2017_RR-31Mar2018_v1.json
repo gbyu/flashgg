@@ -147,8 +147,8 @@
 		"wo_Mjj" : "flashgg/Taggers/data/HHTagger/training_with_18_12_2019_wo_Mjj_training1.weights.xml"
 	},
 	"MVAFlatteningFileName" : {
-		"with_Mjj" : "flashgg/Taggers/data/HHTagger/cumulativeTransformation_20191218.root",
-		"wo_Mjj" : "flashgg/Taggers/data/HHTagger/cumulativeTransformation_20192401_wo_Mjj_leptonveto_2017.root"
+            "with_Mjj" : "flashgg/Taggers/data/HHTagger/cumulativeTransformation_20191812_btag_upd_2017.root",
+            "wo_Mjj" : "flashgg/Taggers/data/HHTagger/cumulativeTransformation_20191812_btag_wo_Mjj_upd_2017.root"
 	},
 	"MVAscalingValue" : 1.0,
 	"NodesReweightingFileName" : "flashgg/Taggers/data/HHTagger/HHreweight_2017_15112019.root",
@@ -182,8 +182,8 @@
 		"wo_Mjj" : "flashgg/Taggers/data/HHTagger/training_with_18_12_2019_wo_Mjj_training1.weights.xml"
 	},
 	"MVAFlatteningFileName" : {
-		"with_Mjj" : "flashgg/Taggers/data/HHTagger/cumulativeTransformation_20191218.root",
-		"wo_Mjj" : "flashgg/Taggers/data/HHTagger/cumulativeTransformation_20192401_wo_Mjj_leptonveto_2017.root"
+            "with_Mjj" : "flashgg/Taggers/data/HHTagger/cumulativeTransformation_20191812_btag_upd_2017.root",
+            "wo_Mjj" : "flashgg/Taggers/data/HHTagger/cumulativeTransformation_20191812_btag_wo_Mjj_upd_2017.root"
 	},
         "NodesReweightingFileName" : "flashgg/Taggers/data/HHTagger/HHreweight_2017_15112019.root",
         "ttHWeightfile" : "flashgg/Taggers/data/ttHKiller/Keras2017_converted_allnode.pb",
