@@ -1,17 +1,41 @@
 {
     "globalTags" :
     {
-        "data" : "102X_dataRun2_Prompt_v11",
-        "MC" : "102X_upgrade2018_realistic_v12"
+        "data" : "102X_dataRun2_Prompt_v15",
+        "MC" : "102X_upgrade2018_realistic_v19"
     },
 
     "flashggMETsFunction" : "runMETs2016",
+    "flashggMetFilters" :
+    {
+        "rerun_ecal_calib_filter" : true,
+        "data" :
+        [
+            "Flag_goodVertices",
+            "Flag_globalSuperTightHalo2016Filter",
+            "Flag_HBHENoiseFilter",
+            "Flag_HBHENoiseIsoFilter",
+            "Flag_EcalDeadCellTriggerPrimitiveFilter",
+            "Flag_BadPFMuonFilter",
+            "Flag_eeBadScFilter"
+        ],
+        "mc" :
+        [
+            "Flag_goodVertices",
+            "Flag_globalSuperTightHalo2016Filter",
+            "Flag_HBHENoiseFilter",
+            "Flag_HBHENoiseIsoFilter",
+            "Flag_EcalDeadCellTriggerPrimitiveFilter",
+            "Flag_BadPFMuonFilter"
+        ]
+    }, 
+
     "DeepJet" : "read",
 
     "flashggPhotons" :
     {
-        "photonIdMVAweightfile_EB" : "flashgg/MicroAOD/data/HggPhoId_94X_barrel_BDT_woisocorr.weights.xml",
-        "photonIdMVAweightfile_EE" : "flashgg/MicroAOD/data/HggPhoId_94X_endcap_BDT_woisocorr.weights.xml",
+        "photonIdMVAweightfile_EB" : "flashgg/MicroAOD/data/HggPhoId_94X_barrel_BDT_v2.weights.xml",
+        "photonIdMVAweightfile_EE" : "flashgg/MicroAOD/data/HggPhoId_94X_endcap_BDT_v2.weights.xml",
         "effAreasConfigFile" : "RecoEgamma/PhotonIdentification/data/Fall17/effAreaPhotons_cone03_pfPhotons_90percentBased_TrueVtx.txt",
         "is2017" : true
     },

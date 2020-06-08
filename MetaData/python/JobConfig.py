@@ -1,7 +1,15 @@
 import FWCore.ParameterSet.VarParsing as VarParsing
 from flashgg.MetaData.samples_utils import SamplesManager
 import FWCore.ParameterSet.Config as cms
+from Utilities.General.cmssw_das_client import get_data as das_query
 
+import commands
+
+def safe_das_query( search, cmd ):
+    output = das_query( search, cmd=cmd )
+    if not 'data' in output:
+        raise Exception('Your das query has not worked properly - check your proxy is valid')
+    return output
 
 class JobConfig(object):
     
@@ -56,15 +64,35 @@ class JobConfig(object):
                                VarParsing.VarParsing.varType.string,          # string, int, or float
                                "campaign")
         self.options.register ('useAAA',
-                               False, # default value
+                               True, # default value
                                VarParsing.VarParsing.multiplicity.singleton, # singleton or list
                                VarParsing.VarParsing.varType.bool,          # string, int, or float
                                "useAAA")
         self.options.register ('useEOS',
-                               True, # default value
+                               False, # default value
                                VarParsing.VarParsing.multiplicity.singleton, # singleton or list
                                VarParsing.VarParsing.varType.bool,          # string, int, or float
                                "useEOS")
+        self.options.register ('copyInputMicroAOD',
+                               False, # default value
+                               VarParsing.VarParsing.multiplicity.singleton, # singleton or list
+                               VarParsing.VarParsing.varType.bool,          # string, int, or float
+                               "copyInputMicroAOD")
+        self.options.register ('useParentDataset',
+                               False, # default value
+                               VarParsing.VarParsing.multiplicity.singleton, # singleton or list
+                               VarParsing.VarParsing.varType.bool,          # string, int, or float
+                               "useParentDataset")
+        self.options.register ('recalculatePDFWeights',
+                               False, # default value
+                               VarParsing.VarParsing.multiplicity.singleton, # singleton or list
+                               VarParsing.VarParsing.varType.bool,          # string, int, or float
+                               "recalculatePDFWeights")
+        self.options.register ('secondaryDataset',
+                               "", # default value
+                               VarParsing.VarParsing.multiplicity.singleton, # singleton or list
+                               VarParsing.VarParsing.varType.string,         # string, int, or float
+                               "secondaryDataset")
         self.options.register ('targetLumi',
                                1.e+3, # default value
                                VarParsing.VarParsing.multiplicity.singleton, # singleton or list
@@ -160,6 +188,7 @@ class JobConfig(object):
             
         #self.pu_distribs_hack_2017 = {  }
 
+        
         # try:
         #     import importlib
         #     from os import listdir,environ
@@ -192,6 +221,10 @@ class JobConfig(object):
     # process customization
     def customize(self,process):
         self.parse()
+
+        # keep useParent and secondaryDataset as exclusive options for the moment
+        if self.options.useParentDataset and self.options.secondaryDataset != "":
+            raise Exception("useParentDataset cannot be set together with a secondaryDataset")
 
         isFwlite = False
         hasOutput = False
@@ -235,7 +268,6 @@ class JobConfig(object):
                 print "Error: cross section not found for dataset %s" % dsetname
                 print
                 
-            self.options.maxEvents = int(maxEvents)
             putarget = None
             samplepu = None
             if self.puTarget != "":
@@ -361,15 +393,50 @@ class JobConfig(object):
                 if lumisToSkip: 
                     target = target.__sub__(lumisToSkip)                    
                 process.source.lumisToProcess = target.getVLuminosityBlockRange()
-
                 print process.source.lumisToProcess
-            
+
         flist = []
+        sflist = []
+
+        # get the runs and lumis contained in each file of the secondary dataset
+        if self.options.secondaryDataset:
+            secondary_files = [fdata['file'][0]['name'] for fdata in safe_das_query("file dataset=%s instance=prod/phys03" % self.options.secondaryDataset, 
+                                                                               cmd='dasgoclient --dasmaps=./')['data']]
+            runs_and_lumis = {}
+            for s in secondary_files:
+                runs_and_lumis[str(s)] = {data['lumi'][0]['run_number'] : data['lumi'][0]['lumi_section_num']
+                                          for data in safe_das_query("lumi file=%s instance=prod/phys03" % s, cmd='dasgoclient --dasmaps=./')['data']}
+
         for f in files:
             if len(f.split(":",1))>1:
                 flist.append(str(f))
             else:
                 flist.append(str("%s%s" % (self.filePrepend,f)))
+            # keep useParent and secondaryDataset as exclusive options for the moment
+            if self.options.useParentDataset:
+                parent_files = safe_das_query("parent file=%s instance=prod/phys03" % f, cmd='dasgoclient --dasmaps=./')['data']
+                for parent_f in parent_files:
+                    parent_f_name = str(parent_f['parent'][0]['name'])
+                    sflist.append('root://cms-xrd-global.cern.ch/'+parent_f_name if 'root://' not in parent_f_name else parent_f_name)
+            elif self.options.secondaryDataset != "":
+                # match primary file to the corresponding secondary file(s)
+                f_runs_and_lumis = {data['lumi'][0]['run_number'] : data['lumi'][0]['lumi_section_num']
+                                    for data in safe_das_query("lumi file=%s instance=prod/phys03" % f, cmd='dasgoclient --dasmaps=./')['data']}
+                for s_name, s_runs_and_lumis in runs_and_lumis.items():
+                    matched_runs = set(f_runs_and_lumis.keys()).intersection(s_runs_and_lumis.keys())
+                    for run in matched_runs:
+                        if any(lumi in f_runs_and_lumis[run] for lumi in s_runs_and_lumis[run]):
+                            sflist.append(s_name)
+
+        ## mitigate server glitches by copying the input files (microAOD) on the worker node
+        if self.copyInputMicroAOD and not self.dryRun:
+            commands.getstatusoutput('mkdir -p input_files/')
+            for i,f in enumerate(flist):
+                status, out = commands.getstatusoutput('xrdcp %s ./input_files/'%f)
+                print(out)
+                flocal = 'file:./input_files/'+f.split('/')[-1]
+                flist[i] = flocal
+
         if len(flist) > 0:
             ## fwlite
             if isFwlite:
@@ -379,6 +446,8 @@ class JobConfig(object):
             else:
                 ## process.source.fileNames.extend([ str("%s%s" % (self.filePrepend,f)) for f in  files])
                 process.source.fileNames = flist
+                if len(sflist) > 0:
+                    process.source.secondaryFileNames = cms.untracked.vstring(sflist)
  
         ## fwlite
         if isFwlite:
@@ -425,7 +494,6 @@ class JobConfig(object):
             self.filePrepend = "root://cms-xrd-global.cern.ch/"
         elif self.useEOS:
             self.filePrepend = "root://eoscms.cern.ch//eos/cms"
-        
         self.samplesMan = None
         dataset = None
         if self.dataset != "":

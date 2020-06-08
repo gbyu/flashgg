@@ -263,6 +263,7 @@ if options.createCrabConfig:
 
         # list of (original, replacement) to bring dataset name to 97 characters or less
         replacements = [
+            ("backup_", ""),
             ("RunIISummer16MiniAODv2-PUMoriond17_qcut19_80X_mcRun2_asymptotic_2016","Moriond17"),
             ("TuneCUEP8M1_13TeV-pythia8","13TeV"),
             ("TuneCUETP8M1_13TeV-madgraphMLM-pythia8","13TeV-mg"),
@@ -288,6 +289,7 @@ if options.createCrabConfig:
             ("_withHLT_80X_mcRun2_asymptotic_v14_ext1-v1","reHLTasym16"),
             ("RunIISummer16MiniAODv2-PUMoriond17","Summer16"),
             ("TrancheIV","T4"),
+            ("DoubleEMEnriched", "DoubleEME"),
             ("PhaseISpring17MiniAOD-FlatPU28to62_90X_upgrade2017_realistic_v20-v1","PhaseISpring17"),
             ("PhaseISpring17MiniAOD-FlatPU28to62_902_90X_upgrade2017_realistic_v20_ext1-v1","PhaseISpring17"),
             ("PhaseIFall16MiniAOD-FlatPU28to62HcalNZSRAW_PhaseIFall16_90X_upgrade2017_realistic_v6_C1-v1","PhaseIFall16"),
@@ -302,6 +304,7 @@ if options.createCrabConfig:
             ("RunIISummer17MiniAOD-NZSFlatPU28to62_92X_upgrade2017_realistic_v10","FlatPU_92Xv10"),
             ("RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14","Fall17"),
             ("RunIIFall17MiniAODv2-PU2017_12Apr2018_1core_94X_mc2017_realistic_v14","Fall17"),
+            ("RunIIFall17MiniAODv2-PU2017_12Apr2018_new_pmx_94X_mc2017_realistic_v14","Fall17"),
             ("RunIIFall18MiniAOD-102X_upgrade2018_realistic_v12-v1","Fall18_102X"),
             ("RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3-v1", "Summer16"),
             ("RunIISummer16MiniAODv3-BS2016_BSandPUSummer16_94X_mcRun2_asymptotic_v3-v1", "Summer16"),
@@ -332,7 +335,6 @@ if options.createCrabConfig:
         while os.path.isdir("crab_" + jobname):
             itry += 1
             jobname = jobname0+"_%s" % ( str(itry).zfill(2) )
-            
         # Actually create the config file: copy the template and replace things where appropriate
         crabConfigFile = "crabConfig_" + jobname + ".py"
         print "Preparing crab for processing ", PrimaryDataset, "\n      -> ", crabConfigFile
