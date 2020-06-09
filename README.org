@@ -14,7 +14,7 @@
    cmsenv
    git cms-init
    cd $CMSSW_BASE/src 
-   git clone -b vbf_080620 https://github.com/gbyu/flashgg 
+   git clone -b vbf_ETHselection https://github.com/gbyu/flashgg 
    source flashgg/setup_flashgg.sh
    #+END_EXAMPLE
 
