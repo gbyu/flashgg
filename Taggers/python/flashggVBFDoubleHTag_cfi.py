@@ -54,11 +54,11 @@ flashggVBFDoubleHTag = cms.EDProducer("FlashggVBFDoubleHTagProducer",
                                    BTagType = cms.vstring('mini_pfDeepFlavourJetTags:probb','mini_pfDeepFlavourJetTags:probbb','mini_pfDeepFlavourJetTags:problepb'), #string for btag algorithm
                                    UseJetID = cms.bool(True),
                                    JetIDLevel = cms.string(jetID),
-                                   UseVBFJetID = cms.bool(True),
+                                   UseVBFJetID = cms.bool(False),
                                    VBFJetIDLevel = cms.string(jetID), 
                                    VBFMjjCut = cms.double(0.0),
                                    VBFJetEta = cms.double(4.7),
-                                   VBFleadJetPt  = cms.double(30.0),
+                                   VBFleadJetPt  = cms.double(40.0),
                                    VBFsubleadJetPt = cms.double(30.0),
 
                                    #MVABoundaries  = cms.vdouble(0.29,0.441, 0.724), # category boundaries for MVA w/o Mjj
