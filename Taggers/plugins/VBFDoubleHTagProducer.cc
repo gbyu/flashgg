@@ -486,7 +486,6 @@ namespace flashgg {
                             auto jet_2 = cleaned_jets[kjet];
                             auto dijet_mass = (jet_1->p4()+jet_2->p4()).mass(); 
                             if (dijet_mass<mjjBoundaries_[0] || dijet_mass>mjjBoundaries_[1]) continue;
-                            if ( jet_1->pt()/dijet_mass <=0.55) continue;
                             double sumbtag=0.;
                             for (unsigned int btag_num=0;btag_num<bTagType_.size();btag_num++)
                                 sumbtag+=jet_1->bDiscriminator(bTagType_[btag_num]) + jet_2->bDiscriminator(bTagType_[btag_num]);
