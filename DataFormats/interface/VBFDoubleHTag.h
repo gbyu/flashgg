@@ -65,7 +65,7 @@ namespace flashgg {
         float getMinDeltaR_VBF_b() const;
         float ttHScore_;*/
         float sumET_, MET_, phiMET_, dPhi1_, dPhi2_, PhoJetMinDr_,PhoJetOtherDr_, njets_, Xtt0_, Xtt1_, pte1_, pte2_, ptmu1_, ptmu2_, ptdipho_, etae1_, etae2_, etamu1_, etamu2_, etadipho_, phie1_, phie2_, phimu1_, phimu2_, phidipho_, fabs_CosThetaStar_CS_, fabs_CosTheta_bb_, mjj_, ptjet1_, ptjet2_, etajet1_, etajet2_, phijet1_, phijet2_, MinDeltaR_VBF_gamma_, MinDeltaR_VBF_b_; 
-      /*  float sumET() const {return sumET_;}
+        float sumET() const {return sumET_;}
         float MET() const {return MET_;}
         float phiMET() const {return phiMET_;}
         float dPhi1() const {return dPhi1_;}
@@ -98,7 +98,7 @@ namespace flashgg {
         float phimu2() const {return phimu2_;}
         float phidipho() const {return phidipho_;}
         float fabs_CosThetaStar_CS() const {return fabs_CosThetaStar_CS_;}
-        float fabs_CosTheta_bb() const {return fabs_CosTheta_bb_;}*/
+        float fabs_CosTheta_bb() const {return fabs_CosTheta_bb_;}
         //VBF related variables:
         float getVBFDeltaR_jg() const; 
         float getVBFDeltaR_jb() const; 
